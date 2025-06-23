@@ -12,7 +12,7 @@ class CreateUtilisateursTable extends Migration
             $table->string('nom');
             $table->string('email')->unique();
             $table->string('mot_de_passe');
-            $table->enum('role', ['employé', 'manager', 'comptable', 'admin']);
+            $table->enum('role', ['employé', 'manager', 'comptable', 'admin'])->nullable();
             $table->foreignId('manager_id')->nullable()->constrained('utilisateurs')->onDelete('set null');
             $table->timestamps();
         });

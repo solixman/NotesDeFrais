@@ -16,7 +16,6 @@ class AuthController extends Controller
             'nom' => 'required|string|max:255',
             'email' => 'required|email|unique:utilisateurs',
             'mot_de_passe' => 'required|string|min:6',
-            'role' => 'required|in:employé,manager,comptable,admin',
         ]);
 
         $user = Utilisateur::create($validated);
