@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class NOTES_DE_FRAIS extends Model
+class NoteDeFrais extends Model
 {
     use HasFactory;
 }
