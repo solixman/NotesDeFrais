@@ -1,14 +1,14 @@
 <?php
+
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 class Utilisateur extends Authenticatable
 {
-    use HasFactory;
+    use HasApiTokens, Notifiable;
 
     protected $table = 'utilisateurs';
 
@@ -22,20 +22,34 @@ class Utilisateur extends Authenticatable
 
     protected $hidden = [
         'mot_de_passe',
+        'remember_token',
     ];
 
-    public function notesDeFrais(): HasMany
+    // Relationships
+    public function manager()
+    {
+        return $this->belongsTo(Utilisateur::class, 'manager_id');
+    }
+
+    public function notesDeFrais()
     {
         return $this->hasMany(NoteDeFrais::class, 'utilisateur_id');
     }
 
-    public function deplacements(): HasMany
+    public function deplacements()
     {
         return $this->hasMany(Deplacement::class, 'utilisateur_id');
     }
 
-    public function manager(): BelongsTo
+    // Password mutator (optional but good)
+    public function setMotDePasseAttribute($value)
     {
-        return $this->belongsTo(Utilisateur::class, 'manager_id');
+        $this->attributes['mot_de_passe'] = bcrypt($value);
+    }
+
+    // Needed for auth
+    public function getAuthPassword()
+    {
+        return $this->mot_de_passe;
     }
 }
