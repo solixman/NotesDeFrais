@@ -57,4 +57,37 @@ class NoteController extends Controller
         }
         }
 
+        
+        public function update(Request $request, $id)
+        {
+            try {
+                
+                $note = NoteDeFrais::findOrFail($id);
+                
+                if ($note->utilisateur_id !== Auth::id() || $note->statut !== 'brouillon') {
+                    return response()->json(['error' => 'Not allowed'], 403);
+                }
+                
+        $data = $request->validate([
+            'date_depense' => 'date',
+            'categorie' => 'in:repas,hôtel,transport',
+            'montant' => 'numeric',
+            'devise' => 'string|size:3',
+            'description' => 'nullable|string',
+            'fichier_justificatif' => 'nullable|file|mimes:jpg,jpeg,png,pdf',
+        ]);
+        
+        if ($request->hasFile('fichier_justificatif')) {
+            $data['fichier_justificatif'] = $request->file('fichier_justificatif')->store('justificatifs', 'public');
+        }
+        $data['description']= $data['description'] ." (Mis à jour)";
+        
+        $note->update($data);
+        return $note;
+    } catch (Exception $e) {
+        return ['error' => $e->getMessage()];
+    }
+    }
+
+
 }
