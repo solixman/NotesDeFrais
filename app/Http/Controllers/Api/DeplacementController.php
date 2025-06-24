@@ -53,7 +53,36 @@ class DeplacementController extends Controller
     }
 
 
+
+ public function update(Request $request, $id)
+    {
+        try {
+     
+        $deplacement = Deplacement::findOrFail($id);
+        
+
+        // if ($deplacement->utilisateur_id !== Auth::id() || $deplacement->statut !== 'en_attente') {
+        //     return response()->json(['error' => 'Not allowed'], 403);
+        // }
+
+        $data = $request->validate([
+            'objet' => 'string|max:255',
+            'lieu' => 'string|max:255',
+            'date_depart' => 'date',
+            'date_retour' => 'date|after_or_equal:date_depart',
+            'moyen_transport' => 'string|max:100',
+            'cout_estime' => 'numeric',
+            'description' => 'nullable|string',
+        ]);
+
+        $deplacement->update($data);
+        return $deplacement;
+          } catch (Exception $e) {
+            return ['error'=>$e->getMessage()];
+        }
+    } 
+
     
-   
+
 
 }
