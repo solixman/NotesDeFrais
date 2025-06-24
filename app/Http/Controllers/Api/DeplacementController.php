@@ -83,6 +83,23 @@ class DeplacementController extends Controller
     } 
 
     
+     public function destroy($id)
+    {
+        try {
+        $deplacement = Deplacement::findOrFail($id);
+
+        if ($deplacement->utilisateur_id !== Auth::id() || $deplacement->statut !== 'en_attente') {
+            return response()->json(['error' => 'Not allowed'], 403);
+        }
+
+        $deplacement->delete();
+
+        return response()->json(['message' => 'Déplacement supprimé']);
+          } catch (Exception $e) {
+            return ['error'=>$e->getMessage()];
+        }
+    }
+
 
 
 }
