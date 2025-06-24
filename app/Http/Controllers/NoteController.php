@@ -181,26 +181,6 @@ class NoteController extends Controller
     
     }
 
-  
-    public function submit($id)
-    {
-        try {
-        $note = NoteDeFrais::findOrFail($id);
-
-        if ($note->utilisateur_id !== Auth::id() || $note->statut !== 'brouillon') {
-            return response()->json(['error' => 'Cannot submit this note'], 403);
-        }
-
-        $note->statut = 'soumise';
-        $note->save();
-
-        //notifications to be added later
-        return $note;
-         } catch (Exception $e) {
-        return ['error' => $e->getMessage()];
-    }
-    }
-
 
     public function markAsReimbursed($id)
     {
