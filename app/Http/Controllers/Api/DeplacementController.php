@@ -100,6 +100,28 @@ class DeplacementController extends Controller
         }
     }
 
+    
+    public function accepter(Request $request, $id)
+    {   
+        
+        try{
+        $user = Auth::user();
+        $deplacement = Deplacement::findOrFail($id);
+
+        if ($user->role !== 'manager') {
+            return response()->json(['error' => 'Only managers can validate'], 403);
+        }
+        $deplacement->statut = 'accepté';
+        $deplacement->commentaire_validation = $request->input('commentaire');
+        $deplacement->date_validation = now();
+        $deplacement->save();
+
+        return $deplacement;
+
+         } catch (Exception $e) {
+            return ['error'=>$e->getMessage()];
+        }
+    }
 
 
 }

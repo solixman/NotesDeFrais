@@ -45,6 +45,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/deplacements/{id}', [DeplacementController::class, 'update']);
     Route::delete('/deplacements/{id}', [DeplacementController::class, 'destroy']);
     
-    Route::post('/deplacements/{id}/valider', [DeplacementController::class, 'valider']);
+    Route::post('/deplacements/{id}/valider', [DeplacementController::class, 'accepter']);
     Route::post('/deplacements/{id}/rejeter', [DeplacementController::class, 'rejeter']);
 });
