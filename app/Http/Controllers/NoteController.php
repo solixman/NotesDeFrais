@@ -111,5 +111,76 @@ class NoteController extends Controller
     }
     }
 
+    
+    public function submit($id)
+    {
+        try {
+        $note = NoteDeFrais::findOrFail($id);
+
+        if ($note->utilisateur_id !== Auth::id() || $note->statut !== 'brouillon') {
+            return response()->json(['error' => 'Cannot submit this note'], 403);
+        }
+
+        $note->statut = 'soumise';
+        $note->save();
+
+        //notifications to be added later
+        return $note;
+         } catch (Exception $e) {
+        return ['error' => $e->getMessage()];
+    }
+    }
+
+
+
+    public function validateNote(Request $request, $id)
+    {
+        try {
+            
+        $user = Auth::user();
+        $note = NoteDeFrais::findOrFail($id);
+
+        if ($user->role !== 'manager') {
+            return response()->json(['error' => 'Only managers can validate'], 403);
+        }
+
+        $note->statut = 'validée';
+        $note->commentaire_validation = $request->input('commentaire');
+        $note->date_validation = now();
+        $note->save();
+
+        return $note;
+        } catch (Exception $e) {
+        return ['error' => $e->getMessage()];
+    }
+    }
+
+    public function reject(Request $request, $id)
+    {
+        try{
+    
+        $user = Auth::user();
+        $note = NoteDeFrais::findOrFail($id);
+
+        if ($user->role !== 'manager') {
+            return response()->json(['error' => 'Only managers can reject'], 403);
+        }
+
+        $request->validate(['commentaire' => 'required|string']);
+
+        $note->statut = 'rejetée';
+        $note->commentaire_validation = $request->input('commentaire');
+        $note->date_validation = now();
+        $note->save();
+
+        return $note;
+       } catch (Exception $e) {
+        return ['error' => $e->getMessage()];
+    }
+       
+    
+    }
+
+  
 
 }
