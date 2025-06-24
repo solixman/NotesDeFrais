@@ -89,5 +89,27 @@ class NoteController extends Controller
     }
     }
 
+    
+
+
+    public function destroy($id)
+    {
+        try {
+            
+        
+        $note = NoteDeFrais::findOrFail($id);
+
+        if ($note->utilisateur_id !== Auth::id() || $note->statut !== 'brouillon') {
+            return response()->json(['error' => 'Not allowed'], 403);
+        }
+
+        $note->delete();
+
+        return response()->json(['message' => 'Note deleted']);
+         } catch (Exception $e) {
+        return ['error' => $e->getMessage()];
+    }
+    }
+
 
 }
