@@ -30,5 +30,31 @@ class NoteController extends Controller
         }
     }
 
+    
+    public function store(Request $request)
+    {
+        try {
+            $data = $request->validate([
+                'date_depense' => 'required|date',
+                'categorie' => 'required|in:repas,hôtel,transport',
+                'montant' => 'required|numeric',
+                'devise' => 'required|string|size:3',
+                'description' => 'nullable|string',
+                'fichier_justificatif' => 'nullable|file|mimes:jpg,jpeg,png,pdf',
+            ]);
+            
+            if ($request->hasFile('fichier_justificatif')) {
+                $data['fichier_justificatif'] = $request->file('fichier_justificatif')->store('justificatifs', 'public');
+            }
+            
+            $data['utilisateur_id'] = Auth::id();
+            $data['statut'] = 'brouillon';
+            
+            return NoteDeFrais::create($data);
+            
+        } catch (Exception $e) {
+            return ['message'=>$e->getMessage()];
+        }
+        }
 
 }
