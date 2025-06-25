@@ -42,7 +42,7 @@ class DeplacementController extends Controller
         ]);
 
         $data['utilisateur_id'] = Auth::id();
-        $data['statut'] = 'en_attente';
+        $data['statut'] = 'en attente';
 
         Deplacement::create($data);
         return ['succes'=>'deplacement created succefully'] ;
