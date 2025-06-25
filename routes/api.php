@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\DeplacementController;
 use App\Http\Controllers\NoteController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -37,4 +38,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/notes/{id}/valider', [NoteController::class, 'validateNote']);
     Route::post('/notes/{id}/rejeter', [NoteController::class, 'reject']);
     Route::post('/notes/{id}/remboursement', [NoteController::class, 'markAsReimbursed']);
+
+    //deplacements 
+    Route::get('/deplacements', [DeplacementController::class, 'index']);
+    Route::post('/deplacements', [DeplacementController::class, 'store']);
+    Route::put('/deplacements/{id}', [DeplacementController::class, 'update']);
+    Route::delete('/deplacements/{id}', [DeplacementController::class, 'destroy']);
+    
+    Route::post('/deplacements/{id}/valider', [DeplacementController::class, 'accepter']);
+    Route::post('/deplacements/{id}/rejeter', [DeplacementController::class, 'rejeter']);
 });
