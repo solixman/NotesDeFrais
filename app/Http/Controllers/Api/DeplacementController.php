@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Deplacement;
+use App\Notifications\DeplacementRejected;
 use App\Notifications\DeplacementSubmitted;
+use App\Notifications\DeplacementValidated;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -113,9 +115,9 @@ class DeplacementController extends Controller
         try {
             $user = Auth::user();
 
-            if ($user->role !== 'manager') {
-                return response()->json(['error' => 'Only managers can validate'], 403);
-            }
+            // if ($user->role !== 'manager') {
+            //     return response()->json(['error' => 'Only managers can validate'], 403);
+            // }
 
             $deplacement = Deplacement::findOrFail($id);
 
@@ -123,6 +125,8 @@ class DeplacementController extends Controller
             $deplacement->commentaire_validation = $request->input('commentaire');
             $deplacement->date_validation = now();
             $deplacement->save();
+
+            $deplacement->utilisateur->notify(new DeplacementValidated($deplacement));
 
             return $deplacement;
         } catch (Exception $e) {
@@ -137,9 +141,9 @@ class DeplacementController extends Controller
 
             $user = Auth::user();
 
-            if ($user->role !== 'manager') {
-                return response()->json(['error' => 'Only managers can reject'], 403);
-            }
+            // if ($user->role !== 'manager') {
+            //     return response()->json(['error' => 'Only managers can reject'], 403);
+            // }
 
 
             $request->validate(['commentaire' => 'required|string']);
@@ -149,6 +153,9 @@ class DeplacementController extends Controller
             $deplacement->commentaire_validation = $request->input('commentaire');
             $deplacement->date_validation = now();
             $deplacement->save();
+            //notification
+            
+            $deplacement->utilisateur->notify(new DeplacementRejected($deplacement));
 
             return $deplacement;
         } catch (Exception $e) {
