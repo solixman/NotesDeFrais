@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\NoteDeFrais;
+use App\Notifications\NoteRejected;
 use App\Notifications\NoteSubmitted;
+use App\Notifications\NoteValidated;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -135,7 +137,7 @@ class NoteController extends Controller
             if ($manager == null) {
                 return ['message' => "the note has been submited but the user doen't have a manager"];
             }
-            
+
             return $note;
 
         } catch (Exception $e) {
@@ -152,14 +154,15 @@ class NoteController extends Controller
             $user = Auth::user();
             $note = NoteDeFrais::findOrFail($id);
 
-            if ($user->role !== 'manager') {
-                return response()->json(['error' => 'Only managers can validate'], 403);
-            }
-
+            // if ($user->role !== 'manager') {
+            //     return response()->json(['error' => 'Only managers can validate'], 403);
+            // }
+     
             $note->statut = 'validée';
             $note->commentaire_validation = $request->input('commentaire');
             $note->date_validation = now();
             $note->save();
+            $note->utilisateur->notify(new NoteValidated($note));
 
             return $note;
         } catch (Exception $e) {
@@ -174,9 +177,9 @@ class NoteController extends Controller
             $user = Auth::user();
             $note = NoteDeFrais::findOrFail($id);
 
-            if ($user->role !== 'manager') {
-                return response()->json(['error' => 'Only managers can reject'], 403);
-            }
+            // if ($user->role !== 'manager') {
+            //     return response()->json(['error' => 'Only managers can reject'], 403);
+            // }
 
             $request->validate(['commentaire' => 'required|string']);
 
@@ -184,6 +187,7 @@ class NoteController extends Controller
             $note->commentaire_validation = $request->input('commentaire');
             $note->date_validation = now();
             $note->save();
+            $note->utilisateur->notify(new NoteRejected($note));
 
             return $note;
         } catch (Exception $e) {
