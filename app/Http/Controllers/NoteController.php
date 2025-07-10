@@ -47,7 +47,7 @@ class NoteController extends Controller
             ]);
 
             if ($request->hasFile('fichier_justificatif')) {
-                $data['fichier_justificatif'] = $request->file('fichier_justificatif')->store('justificatifs', 'public');
+$data['fichier_justificatif'] = $request->file('fichier_justificatif')->store('justificatifs', 'public');
             }
 
             $data['utilisateur_id'] = Auth::id();
@@ -119,9 +119,9 @@ class NoteController extends Controller
         try {
             $note = NoteDeFrais::findOrFail($id);
 
-            // if ($note->utilisateur_id !== Auth::id() || $note->statut !== 'brouillon') {
-            //     return response()->json(['error' => 'Cannot submit this note'], 403);
-            // }
+            if ($note->utilisateur_id !== Auth::id() || $note->statut !== 'brouillon') {
+                return response()->json(['error' => 'Cannot submit this note'], 403);
+            }
 
             $note->statut = 'soumise';
             $note->save();
@@ -154,9 +154,9 @@ class NoteController extends Controller
             $user = Auth::user();
             $note = NoteDeFrais::findOrFail($id);
 
-            // if ($user->role !== 'manager') {
-            //     return response()->json(['error' => 'Only managers can validate'], 403);
-            // }
+            if ($user->role !== 'manager') {
+                return response()->json(['error' => 'Only managers can validate'], 403);
+            }
      
             $note->statut = 'validée';
             $note->commentaire_validation = $request->input('commentaire');

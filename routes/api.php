@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DeplacementController;
+use App\Http\Controllers\Api\FichierController;
 use App\Http\Controllers\NoteController;
+use App\Http\Controllers\UtilisateurController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -47,4 +49,15 @@ Route::middleware('auth:sanctum')->group(function () {
     
     Route::post('/deplacements/{id}/valider', [DeplacementController::class, 'accepter']);
     Route::post('/deplacements/{id}/rejeter', [DeplacementController::class, 'rejeter']);
+
+    // notifications
+    Route::get('/notifications', [UtilisateurController::class, 'notifications']);
+    Route::post('/notifications/{id}/mark-as-read', [UtilisateurController::class, 'markAsRead']);
+
+    //handling files
+    Route::get('/justificatif/{filename}', [FichierController::class, 'download']);
+
 });
+
+
+
