@@ -116,7 +116,7 @@
 **POST** `/api/notifications/{id}/mark-as-read`
 
 ---
-
+()
 ## 📁 Justificatifs
 
 ### 📥 Download File
