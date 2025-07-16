@@ -16,13 +16,6 @@ class DashboardController extends Controller
         $user = Auth::user();
 
         switch ($user->role) {
-            case 'employé' :
-                return response()->json([
-                    'total_notes' => $user->notesDeFrais()->count(),
-                    'drafts' => $user->notesDeFrais()->where('statut', 'brouillon')->count(),
-                    'submitted' => $user->notesDeFrais()->where('statut', 'soumise')->count(),
-                    'deplacements' => $user->deplacements()->count(),
-                ]);
 
             case 'manager':
                 return response()->json([
@@ -43,9 +36,12 @@ class DashboardController extends Controller
                 ]);
 
             default:
-                return response()->json([
-                    'message' => 'Rôle non reconnu'
-                ], 403);
+               return response()->json([
+                    'total_notes' =>  $user->notesDeFrais()->count(),
+                    'drafts' => $user->notesDeFrais()->where('statut', 'brouillon')->count(),
+                    'submitted' => $user->notesDeFrais()->where('statut', 'soumise')->count(),
+                    'deplacements' => $user->deplacements()->count(),
+                ]);
         }
         
     }
