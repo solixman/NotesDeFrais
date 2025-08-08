@@ -19,7 +19,7 @@ class DeplacementController extends Controller
             $user = Auth::user();
 
             if ($user->role === 'admin' || $user->role === 'comptable') {
-                return Deplacement::all();
+                return Deplacement::paginate(20);
             }
 
             return $user->deplacements;
@@ -115,9 +115,9 @@ class DeplacementController extends Controller
         try {
             $user = Auth::user();
 
-            // if ($user->role !== 'manager') {
-            //     return response()->json(['error' => 'Only managers can validate'], 403);
-            // }
+            if ($user->role !== 'manager' && $user->role !== 'admin' ) {
+                return response()->json(['error' => 'Only managers ans admins can validate'], 403);
+            }
 
             $deplacement = Deplacement::findOrFail($id);
 
@@ -141,9 +141,9 @@ class DeplacementController extends Controller
 
             $user = Auth::user();
 
-            // if ($user->role !== 'manager') {
-            //     return response()->json(['error' => 'Only managers can reject'], 403);
-            // }
+            if ($user->role !== 'manager' && $user->role !== 'admin') {
+                return response()->json(['error' => 'Only managers and admins can reject'], 403);
+            }
 
 
             $request->validate(['commentaire' => 'required|string']);

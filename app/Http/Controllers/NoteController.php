@@ -24,10 +24,10 @@ class NoteController extends Controller
             $user = Auth::user();
 
             if ($user->role === 'comptable' || $user->role === 'admin') {
-                return NoteDeFrais::where('utilisateur_id', $user->id)->all();
+                return NoteDeFrais::paginate(20);
             }
-
-            return NoteDeFrais::all();
+            return NoteDeFrais::where('utilisateur_id', $user->id)->paginate(20);
+            
         } catch (Exception $e) {
             return ['error' => $e->getMessage()];
         }
@@ -154,8 +154,8 @@ $data['fichier_justificatif'] = $request->file('fichier_justificatif')->store('j
             $user = Auth::user();
             $note = NoteDeFrais::findOrFail($id);
 
-            if ($user->role !== 'manager') {
-                return response()->json(['error' => 'Only managers can validate'], 403);
+            if ($user->role !== 'manager' && $user->role !== 'admin') {
+                return response()->json(['error' => 'Only managers and admins can validate'], 403);
             }
      
             $note->statut = 'validée';
@@ -177,9 +177,9 @@ $data['fichier_justificatif'] = $request->file('fichier_justificatif')->store('j
             $user = Auth::user();
             $note = NoteDeFrais::findOrFail($id);
 
-            // if ($user->role !== 'manager') {
-            //     return response()->json(['error' => 'Only managers can reject'], 403);
-            // }
+            if ($user->role !== 'manager' &&  $user->role !== 'admin') {
+                return response()->json(['error' => 'Only managers and admins can reject'], 403);
+            }
 
             $request->validate(['commentaire' => 'required|string']);
 

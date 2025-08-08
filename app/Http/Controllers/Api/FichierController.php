@@ -10,10 +10,10 @@ use Illuminate\Support\Facades\Auth;
 class FichierController extends Controller
 {
     public function download($filename){
-
+ $user = Auth::user();
         $note = NoteDeFrais::where('fichier_justificatif', 'justificatifs/' . $filename)->first();
 
-if (!$note || $note->utilisateur_id !== Auth::id()) {
+if (!$note || ($note->utilisateur_id !== Auth::id() && $user->role != 'admin' && $user->role != 'manager' ) ) {
     return response()->json(['error' => 'Not authorized '], 403);
 }
     $path = '/justificatifs/'.$filename; 
